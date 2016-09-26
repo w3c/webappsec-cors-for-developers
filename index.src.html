@@ -201,11 +201,12 @@ When any matching <tt>Access-Control-Allow-Origin</tt> response is received, rea
 
 Although the CORS specification implies that you can list multiple origins in the <tt>Access-Control-Allow-Origin</tt> header, in practice only a single value is allowed by all modern browsers.  The multiple value syntax was intended to allow all origins in a redirect chain to be listed, as allowed by RFC6454, but this was never implemented.
 
-If a cross-origin resource redirects to another resource that is not same-origin, the browser will set the value of the Origin header to <tt>null</tt> after redirecting.  This prevents additional confused deputy attacks, but a cost of making it difficult to transparently move CORS resources that support (cookie-based) credentials and simple requests across domains with 3xx status codes as one can with non-CORS resources.  It is possible to redirect same-origin resources cross-origin (single hop only) because browsers will transparently apply the CORS algorithm to such requests and include the Origin header for the first hop.
+If a cross-origin resource redirects to another resource at a new origin, the browser will set the value of the Origin header to <tt>null</tt> after redirecting.  This prevents additional confused deputy attacks, but a cost of making it difficult to transparently move CORS resources that support (cookie-based) credentials and simple requests across domains with 3xx status codes as one can with non-CORS resources.  It is possible to redirect same-origin resources to a cross-origin location (single hop only) because browsers will transparently apply the CORS algorithm to such requests and include the Origin header for the first hop.
 
 To make possible transparent movement of CORS-enabled resources accessed via simple requests requires work and coordination by servers.  For example, a resource at <strong>https://old.example.com/resource</strong> might respond to a CORS request with credentals with a redirect to <strong>https://new.example.com/resource?originalOrigin=...&amp;credential=...</strong> which would carry the authority to access the resource in the URL parameter instead of the Cookie and Origin headers.  The server at <strong>https://new.example.com</strong> would need custom logic to recognize and authenticate these parameters and perform appropriate authorization before returning <em>Access-Control-Allow-</em> headers to the user agent.
 
-User agents that implement more recent versions of the WHATWG Fetch specification may be able to handle this case more transparently, by re-issuing a preflight request to the new target resource using the pre-redirect value of the Origin header.
+Requests which require a prefilight can transit multiple origins in user agents that implement recent versions of the WHATWG Fetch specification which instruct the preflight request be transparently re-issued to the new target using the pre-redirect value of the Origin header.
+
 </div>
 
 <div class="note">
@@ -315,4 +316,18 @@ Although the purest vision for anonymous requests wanted to do away with any nee
 Responses with <tt>*</tt> are not truly uniform, either.  Because the user agent always sends the Origin header for a CORS requests, even those made without credentials, a server might choose to very its response based on that information.
 </div>
 
-ISSUE: advice for server-side devs, especially on using Vary: Origin and Vary: Cookie appropriately.
+
+Advice for Resource Owners {#resources}
+==========================================================================
+Providing resources for cross-origin consumption requires some work, as well.
+
+<h3>Always send * for resources that respond uniformly</h3>
+It is always safe to return <tt>Access-Control-Allow-Origin: *</tt> for static resources that do not respond differently based on cookies or other distinguishing characteristics of the request.  Such resources could always be fetched into the context of any foreign resource via a proxy, so allowing read access is an optimization that has no additional security or privacy implications.  Sending * is part of being a good citizen of the Web as it allows browser-based applications like podcast aggregators or Open Data browsers to access your resources as a native app equivalent might, without needing a proxy server.
+
+<h3>Use Vary</h3>
+If a resource requires credentials, it cannot return <tt>*</tt>, it must reflect the Origin header value from the request.  This implies that, unless the response explicitly indicates it should never be cached, it should also send a <tt>Vary: Origin</tt> header to keep the browser from re-using the response and denying access to requests from other origins that might be authorized.
+
+If a resource is intended to be readable, truly regardless of the context of the request, first it should take care not to actually vary and reveal private information based on the presence and content of a cookie.  Then it should send <tt>Vary: Cookie, Origin</tt> and either <tt>Access-Control-Allow-Origin: *</tt> for requests made without cookies or reflect the request's Origin into the <tt>Access-Control-Allow-Origin</tt> header for credentialed requests.
+
+<h3>Do not blindly reflect request Origin for credentialed requests when a resource may contain secrets or PII</h3>
+If your resource includes customized, per-user content, it should not expose such information cross-origin.  Consider carefully if "public" content may inadvertantly include things like session tokens, anti-CSRF tokens, grettings that expose personally identifying information like user names, or comments that contain uniquely identifying identifiers.  Such things exposed blindly cross-origin may compromise the security and privacy of your users by providing a stable identifier that can track them across all their activities on the web or allow hijacking of their account. (even though cookie headers are never shared with CORS)

@@ -1330,11 +1330,11 @@ Possible extra rowspan handling
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">CORS for Developers</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">W3C Working Group Note, <time class="dt-updated" datetime="2016-09-13">13 September 2016</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">W3C Working Group Note, <time class="dt-updated" datetime="2016-09-26">26 September 2016</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
-     <dd><a class="u-url" href="http://www.w3.org/TR/2016/NOTE-cors-for-developers-1-20160913/">http://www.w3.org/TR/2016/NOTE-cors-for-developers-1-20160913/</a>
+     <dd><a class="u-url" href="http://www.w3.org/TR/2016/NOTE-cors-for-developers-1-20160926/">http://www.w3.org/TR/2016/NOTE-cors-for-developers-1-20160926/</a>
      <dt>Editor's Draft:
      <dd><a href="https://w3c.github.io/webappsec-cors-for-develpers/">https://w3c.github.io/webappsec-cors-for-develpers/</a>
      <dt>Version History:
@@ -1350,7 +1350,7 @@ Possible extra rowspan handling
    <div data-fill-with="warning"></div>
    <p class="copyright" data-fill-with="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="https://licensebuttons.net/p/zero/1.0/80x15.png"></a> To the extent possible under law, the editors have waived all copyright
 and related or neighboring rights to this work.
-In addition, as of 13 September 2016,
+In addition, as of 26 September 2016,
 the editors have made this specification available under the <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
 Parts of this work may be from another specification document.  If so, those parts are instead covered by the license of that specification document. </p>
@@ -1386,6 +1386,13 @@ Cross-Origin Resource Sharing (CORS) and the CORS-mode of Fetch.</p>
       <li><a href="#identify-yourself-and-get-permission-simple-request-read-permissions"><span class="secno">5.1</span> <span class="content">Identify Yourself and Get Permission: Simple Request Read Permissions</span></a>
       <li><a href="#getting-additional-send-permissions"><span class="secno">5.2</span> <span class="content">Getting Additional Send Permissions</span></a>
       <li><a href="#anonymous-requests-or-access-control-allow-origin"><span class="secno">5.3</span> <span class="content">Anonymous Requests (or, “Access-Control-Allow-Origin: *”)</span></a>
+     </ol>
+    <li>
+     <a href="#resources"><span class="secno">6</span> <span class="content">Advice for Resource Owners</span></a>
+     <ol class="toc">
+      <li><a href="#always-send--for-resources-that-respond-uniformly"><span class="secno">6.1</span> <span class="content">Always send * for resources that respond uniformly</span></a>
+      <li><a href="#use-vary"><span class="secno">6.2</span> <span class="content">Use Vary</span></a>
+      <li><a href="#do-not-blindly-reflect-request-origin-for-credentialed-requests-when-a-resource-may-contain-secrets-or-pii"><span class="secno">6.3</span> <span class="content">Do not blindly reflect request Origin for credentialed requests when a resource may contain secrets or PII</span></a>
      </ol>
     <li><a href="#references"><span class="secno"></span> <span class="content">References</span></a>
     <li><a href="#issues-index"><span class="secno"></span> <span class="content">Issues Index</span></a>
@@ -1615,12 +1622,12 @@ Access-Control-Expose-Headers: Special-Response-Header, Header2
       header, in practice only a single value is allowed by all modern browsers.  The multiple value syntax was intended to allow all origins in a redirect chain to be listed, as allowed by RFC6454, but this was never implemented.
     </p>
     <p>
-     If a cross-origin resource redirects to another resource that is not same-origin, the browser will set the value of the Origin header to 
+     If a cross-origin resource redirects to another resource at a new origin, the browser will set the value of the Origin header to 
      <tt>null</tt>
-      after redirecting.  This prevents additional confused deputy attacks, but a cost of making it difficult to transparently move CORS resources that support (cookie-based) credentials and simple requests across domains with 3xx status codes as one can with non-CORS resources.  It is possible to redirect same-origin resources cross-origin (single hop only) because browsers will transparently apply the CORS algorithm to such requests and include the Origin header for the first hop.
+      after redirecting.  This prevents additional confused deputy attacks, but a cost of making it difficult to transparently move CORS resources that support (cookie-based) credentials and simple requests across domains with 3xx status codes as one can with non-CORS resources.  It is possible to redirect same-origin resources to a cross-origin location (single hop only) because browsers will transparently apply the CORS algorithm to such requests and include the Origin header for the first hop.
     </p>
     <p>To make possible transparent movement of CORS-enabled resources accessed via simple requests requires work and coordination by servers.  For example, a resource at <strong>https://old.example.com/resource</strong> might respond to a CORS request with credentals with a redirect to <strong>https://new.example.com/resource?originalOrigin=...&amp;credential=...</strong> which would carry the authority to access the resource in the URL parameter instead of the Cookie and Origin headers.  The server at <strong>https://new.example.com</strong> would need custom logic to recognize and authenticate these parameters and perform appropriate authorization before returning <em>Access-Control-Allow-</em> headers to the user agent.</p>
-    <p>User agents that implement more recent versions of the WHATWG Fetch specification may be able to handle this case more transparently, by re-issuing a preflight request to the new target resource using the pre-redirect value of the Origin header.</p>
+    <p>Requests which require a prefilight can transit multiple origins in user agents that implement recent versions of the WHATWG Fetch specification which instruct the preflight request be transparently re-issued to the new target using the pre-redirect value of the Origin header.</p>
    </div>
    <div class="note" role="note">
      <strong>No Sharing of Cookies</strong> 
@@ -1793,7 +1800,29 @@ Access-Control-Max-Age: 60
       are not truly uniform, either.  Because the user agent always sends the Origin header for a CORS requests, even those made without credentials, a server might choose to very its response based on that information.
     </p>
    </div>
-   <p class="issue" id="issue-b66f6b81"><a class="self-link" href="#issue-b66f6b81"></a> advice for server-side devs, especially on using Vary: Origin and Vary: Cookie appropriately.</p>
+   <h2 class="heading settled" data-level="6" id="resources"><span class="secno">6. </span><span class="content">Advice for Resource Owners</span><a class="self-link" href="#resources"></a></h2>
+    Providing resources for cross-origin consumption requires some work, as well. 
+   <h3 class="heading settled" data-level="6.1" id="always-send--for-resources-that-respond-uniformly"><span class="secno">6.1. </span><span class="content">Always send * for resources that respond uniformly</span><a class="self-link" href="#always-send--for-resources-that-respond-uniformly"></a></h3>
+    It is always safe to return 
+   <tt>Access-Control-Allow-Origin: *</tt>
+    for static resources that do not respond differently based on cookies or other distinguishing characteristics of the request.  Such resources could always be fetched into the context of any foreign resource via a proxy, so allowing read access is an optimization that has no additional security or privacy implications.  Sending * is part of being a good citizen of the Web as it allows browser-based applications like podcast aggregators or Open Data browsers to access your resources as a native app equivalent might, without needing a proxy server. 
+   <h3 class="heading settled" data-level="6.2" id="use-vary"><span class="secno">6.2. </span><span class="content">Use Vary</span><a class="self-link" href="#use-vary"></a></h3>
+    If a resource requires credentials, it cannot return 
+   <tt>*</tt>
+   , it must reflect the Origin header value from the request.  This implies that, unless the response explicitly indicates it should never be cached, it should also send a 
+   <tt>Vary: Origin</tt>
+    header to keep the browser from re-using the response and denying access to requests from other origins that might be authorized. 
+   <p>
+    If a resource is intended to be readable, truly regardless of the context of the request, first it should take care not to actually vary and reveal private information based on the presence and content of a cookie.  Then it should send 
+    <tt>Vary: Cookie, Origin</tt>
+     and either 
+    <tt>Access-Control-Allow-Origin: *</tt>
+     for requests made without cookies or reflect the request’s Origin into the 
+    <tt>Access-Control-Allow-Origin</tt>
+     header for credentialed requests.
+   </p>
+   <h3 class="heading settled" data-level="6.3" id="do-not-blindly-reflect-request-origin-for-credentialed-requests-when-a-resource-may-contain-secrets-or-pii"><span class="secno">6.3. </span><span class="content">Do not blindly reflect request Origin for credentialed requests when a resource may contain secrets or PII</span><a class="self-link" href="#do-not-blindly-reflect-request-origin-for-credentialed-requests-when-a-resource-may-contain-secrets-or-pii"></a></h3>
+    If your resource includes customized, per-user content, it should not expose such information cross-origin.  Consider carefully if "public" content may inadvertantly include things like session tokens, anti-CSRF tokens, grettings that expose personally identifying information like user names, or comments that contain uniquely identifying identifiers.  Such things exposed blindly cross-origin may compromise the security and privacy of your users by providing a stable identifier that can track them across all their activities on the web or allow hijacking of their account. (even though cookie headers are never shared with CORS) 
   </main>
 <script>
 (function() {
@@ -1929,5 +1958,4 @@ Access-Control-Max-Age: 60
   <div style="counter-reset:issue">
    <div class="issue"> this whole document needs references and terms linkified<a href="#issue-a6cd89cf"> ↵ </a></div>
    <div class="issue"> document how to do this with Fetch API<a href="#issue-1b03248a"> ↵ </a></div>
-   <div class="issue"> advice for server-side devs, especially on using Vary: Origin and Vary: Cookie appropriately.<a href="#issue-b66f6b81"> ↵ </a></div>
   </div>
