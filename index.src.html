@@ -1,6 +1,6 @@
 <pre class='metadata'>
 Title: CORS for Developers
-ED: https://w3c.github.io/webappsec-cors-for-develpers/
+ED: https://w3c.github.io/webappsec-cors-for-developers/
 Shortname: cors-for-developers 
 Level: 1
 Status: NOTE 
@@ -10,7 +10,7 @@ Abstract:
   This Note provides historical and instructional context for developers working with 
 	Cross-Origin Resource Sharing (CORS) and the CORS-mode of Fetch.
 Indent: 2
-Version History: https://github.com/w3c/webappsec-cors-for-develpers/commits/master/index.src.html
+Version History: https://github.com/w3c/webappsec-cors-for-developers/commits/master/index.src.html
 Boilerplate: omit conformance
 !Participate: <a href="https://github.com/w3c/webappsec-cors-for-developers/issues/new">File an issue</a> (<a href="https://github.com/w3c/webappsec-cors-for-developers/issues">open issues</a>)
 </pre>
@@ -306,7 +306,7 @@ The use of the asterisk by CORS can be confusing in the context of an otherwise 
 
 An unfortunate consequence of this model, however, is that a CORS client must know in advance if the contract of a resource it is requesting requires anonymous or credentialed access, or it must implement client-side failure and retry logic.  This can be problematic when designing something like an open data explorer if all potential data sources do not uniformly respond to anonymous requests.
 
-<strong>Thes story behind <tt>*</tt></strong>
+<strong>The story behind <tt>*</tt></strong>
 Why does the <tt>*</tt> mode of CORS behave so differently than the credentialed mode? Given the already long history of web vulnerabilities attributable to abuse of ambient authority, there were two schools of thought about how to expand the web platform with cross-origin requests at the time CORS was developed.  One camp proposed extending the already-familiar ambient authority model in which the user agent transparently adds cookies to requests and performs permission management for resources.  The other camp felt that ambient authority was a mistake in the architecture of the web, and advocated for cross-origin requests free of any ambient credentials or origin-based authentication.  (Which, they also argued, could be exempt from the Same Origin Policy entirely, since such requests were equivalent to loading from an unprivileged proxy.)  The <tt>XDomainRequest</tt> object in Microsoft Internet Explorer 8 and 9 retained some of this style - it had no support for credentials, only anonymous requests, although it also used the same <tt>Access-Control-[...]</tt> headers.
 
 The familiarity of the ambient authority model of CORS and its ability to slot easily into existing application authentication and authorization frameworks eventually won more favor with developers than re-designing their applications in a capability-security style, (https://www.w3.org/TR/capability-urls/) but the anonymous request mode was retained as a “subset” of CORS.  Unfortunately, the subtle differences in architectural style that persisted and the choice of <tt>*</tt> to represent such requests has been a consistent source of confusion.
