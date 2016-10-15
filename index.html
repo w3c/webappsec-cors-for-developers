@@ -1330,11 +1330,11 @@ Possible extra rowspan handling
   <div class="head">
    <p data-fill-with="logo"></p>
    <h1 class="p-name no-ref" id="title">CORS for Developers</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">W3C Working Group Note, <time class="dt-updated" datetime="2016-09-27">27 September 2016</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">W3C Working Group Note, <time class="dt-updated" datetime="2016-10-15">15 October 2016</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
-     <dd><a class="u-url" href="http://www.w3.org/TR/2016/NOTE-cors-for-developers-1-20160927/">http://www.w3.org/TR/2016/NOTE-cors-for-developers-1-20160927/</a>
+     <dd><a class="u-url" href="http://www.w3.org/TR/2016/NOTE-cors-for-developers-1-20161015/">http://www.w3.org/TR/2016/NOTE-cors-for-developers-1-20161015/</a>
      <dt>Editor's Draft:
      <dd><a href="https://w3c.github.io/webappsec-cors-for-developers/">https://w3c.github.io/webappsec-cors-for-developers/</a>
      <dt>Version History:
@@ -1350,7 +1350,7 @@ Possible extra rowspan handling
    <div data-fill-with="warning"></div>
    <p class="copyright" data-fill-with="copyright"><a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img alt="CC0" src="https://licensebuttons.net/p/zero/1.0/80x15.png"></a> To the extent possible under law, the editors have waived all copyright
 and related or neighboring rights to this work.
-In addition, as of 27 September 2016,
+In addition, as of 15 October 2016,
 the editors have made this specification available under the <a href="http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0" rel="license">Open Web Foundation Agreement Version 1.0</a>,
 which is available at http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
 Parts of this work may be from another specification document.  If so, those parts are instead covered by the license of that specification document. </p>
@@ -1368,31 +1368,33 @@ Cross-Origin Resource Sharing (CORS) and the CORS-mode of Fetch.</p>
    <ol class="toc" role="directory">
     <li><a href="#intro"><span class="secno">1</span> <span class="content">Introduction</span></a>
     <li><a href="#beginning"><span class="secno">2</span> <span class="content">Cross-Origin requests at the beginning of the Web</span></a>
+    <li><a href="#csrf"><span class="secno">3</span> <span class="content">Cookies, “Ambient Authority” and Cross Site Request Forgery (CSRF)</span></a>
     <li>
-     <a href="#csrf"><span class="secno">3</span> <span class="content">Cookies, “Ambient Authority” and Cross Site Request Forgery (CSRF)</span></a>
+     <a href="#the-cross-origin-http-access-control-table"><span class="secno">4</span> <span class="content">The Cross-Origin HTTP access control table</span></a>
      <ol class="toc">
-      <li><a href="#cross-origin-send-permissions-pre-javascript-browsers"><span class="secno">3.1</span> <span class="content">CROSS-ORIGIN SEND PERMISSIONS (pre-Javascript browsers)</span></a>
-      <li><a href="#cross-origin-read-permissions-pre-javascript-browsers"><span class="secno">3.2</span> <span class="content">CROSS-ORIGIN READ PERMISSIONS (pre-Javascript browsers)</span></a>
+      <li><a href="#cross-origin-send-permissions-pre-javascript-browsers"><span class="secno">4.1</span> <span class="content">CROSS-ORIGIN SEND PERMISSIONS (pre-JavaScript browsers)</span></a>
+      <li><a href="#cross-origin-read-permissions-pre-javascript-browsers"><span class="secno">4.2</span> <span class="content">CROSS-ORIGIN READ PERMISSIONS (pre-JavaScript browsers)</span></a>
      </ol>
     <li>
-     <a href="#script"><span class="secno">4</span> <span class="content">&lt;script>, resources-as-applications, XHR and AJAX</span></a>
+     <a href="#script"><span class="secno">5</span> <span class="content">&lt;script>, resources-as-applications, XHR and AJAX</span></a>
      <ol class="toc">
-      <li><a href="#cross-origin-send-permissions-simple-safelisted-request"><span class="secno">4.1</span> <span class="content">CROSS-ORIGIN SEND PERMISSIONS (Simple / Safelisted Request)</span></a>
-      <li><a href="#cross-origin-read-permissions-simple-safelisted-response"><span class="secno">4.2</span> <span class="content">CROSS-ORIGIN READ PERMISSIONS (Simple / Safelisted Response)</span></a>
+      <li><a href="#cross-origin-send-permissions-simple-safelisted-request"><span class="secno">5.1</span> <span class="content">CROSS-ORIGIN SEND PERMISSIONS (Simple / Safelisted Request)</span></a>
+      <li><a href="#cross-origin-read-permissions-simple-safelisted-response"><span class="secno">5.2</span> <span class="content">CROSS-ORIGIN READ PERMISSIONS (Simple / Safelisted Response)</span></a>
      </ol>
     <li>
-     <a href="#cors"><span class="secno">5</span> <span class="content">CORS</span></a>
+     <a href="#cors"><span class="secno">6</span> <span class="content">CORS</span></a>
      <ol class="toc">
-      <li><a href="#identify-yourself-and-get-permission-simple-request-read-permissions"><span class="secno">5.1</span> <span class="content">Identify Yourself and Get Permission: Simple Request Read Permissions</span></a>
-      <li><a href="#getting-additional-send-permissions"><span class="secno">5.2</span> <span class="content">Getting Additional Send Permissions</span></a>
-      <li><a href="#anonymous-requests-or-access-control-allow-origin"><span class="secno">5.3</span> <span class="content">Anonymous Requests (or, “Access-Control-Allow-Origin: *”)</span></a>
+      <li><a href="#identify-yourself-and-get-permission-simple-request-read-permissions"><span class="secno">6.1</span> <span class="content">Identify Yourself and Get Permission: Simple Request Read Permissions</span></a>
+      <li><a href="#getting-additional-send-permissions"><span class="secno">6.2</span> <span class="content">Getting Additional Send Permissions</span></a>
+      <li><a href="#anonymous-requests-or-access-control-allow-origin"><span class="secno">6.3</span> <span class="content">Anonymous Requests (or, “Access-Control-Allow-Origin: *”)</span></a>
      </ol>
     <li>
-     <a href="#resources"><span class="secno">6</span> <span class="content">Advice for Resource Owners</span></a>
+     <a href="#resources"><span class="secno">7</span> <span class="content">Advice for Resource Owners</span></a>
      <ol class="toc">
-      <li><a href="#always-send--for-resources-that-respond-uniformly"><span class="secno">6.1</span> <span class="content">Always send * for resources that respond uniformly</span></a>
-      <li><a href="#use-vary"><span class="secno">6.2</span> <span class="content">Use Vary</span></a>
-      <li><a href="#do-not-blindly-reflect-request-origin-for-credentialed-requests-when-a-resource-may-contain-secrets-or-pii"><span class="secno">6.3</span> <span class="content">Do not blindly reflect request Origin for credentialed requests when a resource may contain secrets or PII</span></a>
+      <li><a href="#always-send--for-resources-that-respond-uniformly"><span class="secno">7.1</span> <span class="content">Always send * for resources that respond uniformly</span></a>
+      <li><a href="#use-vary"><span class="secno">7.2</span> <span class="content">Use Vary</span></a>
+      <li><a href="#do-not-blindly-reflect-request-origin-for-credentialed-requests-when-a-resource-may-contain-secrets-or-pii"><span class="secno">7.3</span> <span class="content">Do not blindly reflect request Origin for credentialed requests when a resource may contain secrets or PII</span></a>
+      <li><a href="#avoid-returning-access-control-allow-origin-null"><span class="secno">7.4</span> <span class="content">Avoid returning <tt>Access-Control-Allow-Origin: "null"</tt></span></a>
      </ol>
     <li><a href="#references"><span class="secno"></span> <span class="content">References</span></a>
     <li><a href="#issues-index"><span class="secno"></span> <span class="content">Issues Index</span></a>
@@ -1401,15 +1403,19 @@ Cross-Origin Resource Sharing (CORS) and the CORS-mode of Fetch.</p>
   <main>
    <p class="issue" id="issue-a6cd89cf"><a class="self-link" href="#issue-a6cd89cf"></a> this whole document needs references and terms linkified</p>
    <h2 class="heading settled" data-level="1" id="intro"><span class="secno">1. </span><span class="content">Introduction</span><a class="self-link" href="#intro"></a></h2>
-   <p>One of the defining characteristics of a web application is the way in which resources can link and communicate with each other.   Over time, as browsers have evolved and become more powerful, the ways in which web applications can interact has increased.  To maintain security in this feature-rich environment, browsers use a same origin security model and restrict applications from accessing resources across origins. Cross-Origin Resource Sharing (CORS) allows web applications to operate across origins and is therefore one of the most powerful features added to the web platform, but it evolved in an environment full of existing applications that assumed this capability was impossible.  Browsers had to make the impossible possible, securely, and competing proposals had to be negotiated into a single system.   Like many things that are the result of evolution or compromise, there are things about CORS that may seem confusing or inconsistent. Reading the W3C CORS or WHATWG Fetch specification is probably not much help with this confusion, as those documents are oriented towards people building web browsers. This document aims to explain the history and usage of Cross-Origin Resource Sharing for people developing web applications using CORS in the browser, and exposing CORS-aware resources on their servers.</p>
+   <p>One of the defining characteristics of a Web application is the way in which resources can link and communicate with each other.   Over time, as browsers have evolved and become more powerful, the ways in which Web applications can interact has increased.  To maintain security in this feature-rich environment, browsers use an origin based security model and restrict how data may be shared across origins. Cross-Origin Resource Sharing (CORS) allows Web applications to share data across origins and is therefore one of the most powerful features of the Web platform, but it evolved in an environment full of existing applications that assumed this capability was impossible.  Browsers had to make the impossible possible, securely, and competing proposals had to be negotiated into a single system.   Like many things that are the result of evolution or compromise, there are things about CORS that may seem confusing or inconsistent. Reading the W3C CORS or WHATWG Fetch specification is probably not much help with this confusion, as those documents are oriented towards people building browsers. This document aims to explain the history and usage of Cross-Origin Resource Sharing for people developing Web applications using CORS in the browser, and exposing CORS-aware resources on their servers.</p>
    <h2 class="heading settled" data-level="2" id="beginning"><span class="secno">2. </span><span class="content">Cross-Origin requests at the beginning of the Web</span><a class="self-link" href="#beginning"></a></h2>
-   <p>In the early days of browsers, a resource could interact with other resources in a very small number of ways.  You could use an anchor to make a GET request, which would also navigate the browser, so the previous page couldn’t see the results.  You could use a form to make a GET or POST request, which would also navigate the browser.  Or you could include resources into your page, like images - but you couldn’t access the content of these images or other resources included in this way.</p>
+   <p>In the early days of browsers, a resource could interact with other resources in a very small number of ways.  You could use an anchor to make a GET request, which would also navigate the browser, so the previous page couldn’t see the results.  You could use a form to make a GET or POST request, which would also navigate the browser.  Or you could include resources into your page, like images - but you couldn’t access the content of these images or other resources included in this way.  In this world of static documents, a complex security model was unnecessary.</p>
    <h2 class="heading settled" data-level="3" id="csrf"><span class="secno">3. </span><span class="content">Cookies, “Ambient Authority” and Cross Site Request Forgery (CSRF)</span><a class="self-link" href="#csrf"></a></h2>
-   <p>HTTP is a stateless protocol, but state can be useful.  For instance, you would probably not like to have to enter your password on every single request to an authenticated application.  Cookies filled this role and emerged very early in the history of the web.  A cookie allows a site to save a small amount of client side state.  At a time when documents were static, cookies were the first browser feature to need access control policies enforced by the client - roughly, the browser would only send cookies back to the site that set them, as determined by the scheme and host of the resource.  So, e.g., <strong>https://bank-example.com/a.html</strong> could set a cookie that <strong>https://bank-example.com/b.html</strong> could read (as part of a future request, only later through script), but <strong>https://evil-example.com/bad.html</strong> could not access.</p>
-   <p>Browsers save cookies as the user navigates through many different application domains, and send them any time a matching request is issued.  This led to the first cross-origin security problems.  For example, although <strong>https://evil-example.com</strong> can’t read <strong>https://bank-example.com</strong>’s cookies and access your account directly, it could create a form that sent a POST to <strong>https://bank-example.com/transferFunds</strong> with instructions to transfer money to a different account.  The request would be sent with your cookie, and the bank might execute the transfer as if it it was on your instructions.  This kind of attack is called <em>Cross Site Request Forgery</em> (CSRF), a class of the “Confused Deputy” problem.  CSRF is enabled by the fact that the authorization conveyed by the cookie is present in the browser and attached to every request by default, without requiring additional user action, for any request where the cookie is in scope, regardless of where the request originated.  This style of access control interaction is often referred to as <em>ambient authority</em>.  Managing ambient authority and defending against CSRF are key motivators for much of the subsequent evolution of the web security model, including CORS.</p>
-   <div class="note" role="note"> If you are developing for the web platform and are used to writing apps for a platform like Android or iOS, you may wonder why your web app can’t make any request and read the results as it is possible to do with the platform native APIs. <br> <br> Compared to the model of most mobile operating sytems that isolates data and state between different apps and defines inter-process communication channels that often require an explicit context switch between apps, a general purpose web browser gives users the ability to move seamlessly between (and even interact with embeddded) application contexts with different security principals while retaining all of their state, authority and customizations, and to do complex communications across domains without reauthenticating everywhere.  This is incredibly powerful, but to protect the user the browser must also act as a security monitor, assuming the role the trusted operating system does on a mobile platform, to isolate potentially malicious resources the user might browse or be directed to from data it should not have access to. </div>
-   <p>Although it wasn’t thought of this way at the time, we can represent what the early browser did with cross-origin requests in terms of an access control table.  Later on, we can see how CORS allows us to modify the permissions in this table. Rather than the read/write permissions you might use for a local file, for HTTP requests we will think in terms of permissions to SEND requests and READ the results.  SEND permissions are the types and attributes of requests a resource is allowed to make from the browser.  READ permissions are the types and attributes of responses a resource is allowed by the browser to access.  The following are the things a conforming user agent could do, explicitly or implicitly, with cross-origin resources:</p>
-   <h3 class="heading settled" data-level="3.1" id="cross-origin-send-permissions-pre-javascript-browsers"><span class="secno">3.1. </span><span class="content">CROSS-ORIGIN SEND PERMISSIONS (pre-Javascript browsers)</span><a class="self-link" href="#cross-origin-send-permissions-pre-javascript-browsers"></a></h3>
+   <p>HTTP is a stateless protocol, but state can be useful.  For instance, you would probably not like to have to enter your password on every single request to an authenticated application.  Cookies filled this role and emerged very early in the history of the Web.  A cookie allows a site to save a small amount of client side state.  Cookies were the first browser feature to need a client-side access control policy.  That policy stated that the browser shall only send cookies back to the site that set them, as determined by the scheme and host of the resource.  So, e.g., <strong>https://bank-example.com/a.html</strong> could set a cookie that <strong>https://bank-example.com/b.html</strong> could see as part of a future request, but <strong>https://evil-example.com/bad.html</strong> could not see.</p>
+   <p>Browsers save cookies as the user navigates through many application origins and send them back any time a new request to that origin is made.  This led to the first cross-origin security problems.  For example, although <strong>https://evil-example.com</strong> can’t read <strong>https://bank-example.com</strong>’s cookies and access your account directly, it could create a form that sent a POST to <strong>https://bank-example.com/transferFunds</strong> with instructions to transfer money to a different account.  As the request would be sent with your cookie, the bank might execute the transfer as if it it was on your instructions.  This kind of attack is called <em>Cross Site Request Forgery</em> (CSRF), a class of the “Confused Deputy” problem.  CSRF exists because a cookie is present in the browser and attached to every request by default, without requiring additional user action, regardless of where the request originated.  This style of access control interaction is often referred to as <em>ambient authority</em>.  Managing ambient authority and defending against CSRF are key motivators for much of the subsequent evolution of the Web security model, including CORS.</p>
+   <div class="note" role="note">
+     If you are developing for the Web and are used to writing apps for a platform like Android or iOS, you may wonder why your app can’t make any request and read the results as it is possible to do with the platform native APIs. The differences is in the layer at which security protections for the user are enforced.  An application on a mobile operating system may typically make whatever network requests it wants and do anything with data in its own scope.  The user is protected from malicious applications at the operating system layer, isolating and defining boundaries between different applications, and between applications and global state and privileges. 
+    <p>A general purpose browser treats Web content from each origin as its own application and enforces isolation between them, on the user’s behalf, as a mobile operating system might between apps.  This is necessary because of the ambient authority carried by things like cookies. While it may seem restrictive at first compared to how networking APIs work in a mobile operating system, it also allows rich and seamless interaction between different application domains if we follow the security rules.</p>
+   </div>
+   <h2 class="heading settled" data-level="4" id="the-cross-origin-http-access-control-table"><span class="secno">4. </span><span class="content">The Cross-Origin HTTP access control table</span><a class="self-link" href="#the-cross-origin-http-access-control-table"></a></h2>
+   <p>Although it wasn’t thought of this way at the time, we can represent what the early browser allowed with cross-origin requests in terms of an access control table.  Later on, we can see how CORS allows us to modify the permissions in this table. Rather than the read/write permissions you might use for a local file, for HTTP requests we will think in terms of permissions to SEND requests and READ the results.  SEND permissions are the types and attributes of requests a resource is allowed to make from the browser.  READ permissions are the types and attributes of responses a resource is allowed by the browser to access.  The following are the things a conforming user agent allowed a resource to do, explicitly or implicitly, with cross-origin resources:</p>
+   <h3 class="heading settled" data-level="4.1" id="cross-origin-send-permissions-pre-javascript-browsers"><span class="secno">4.1. </span><span class="content">CROSS-ORIGIN SEND PERMISSIONS (pre-JavaScript browsers)</span><a class="self-link" href="#cross-origin-send-permissions-pre-javascript-browsers"></a></h3>
    <table class="accessControlTable">
     <tbody>
      <tr class="allowed">
@@ -1431,7 +1437,7 @@ Cross-Origin Resource Sharing (CORS) and the CORS-mode of Fetch.</p>
       <td>Set header value: Content-Language
       <td>USER-CONTROLLED*
    </table>
-   <h3 class="heading settled" data-level="3.2" id="cross-origin-read-permissions-pre-javascript-browsers"><span class="secno">3.2. </span><span class="content">CROSS-ORIGIN READ PERMISSIONS (pre-Javascript browsers)</span><a class="self-link" href="#cross-origin-read-permissions-pre-javascript-browsers"></a></h3>
+   <h3 class="heading settled" data-level="4.2" id="cross-origin-read-permissions-pre-javascript-browsers"><span class="secno">4.2. </span><span class="content">CROSS-ORIGIN READ PERMISSIONS (pre-JavaScript browsers)</span><a class="self-link" href="#cross-origin-read-permissions-pre-javascript-browsers"></a></h3>
    <table class="accessControlTable">
     <tbody>
      <tr class="disallowed">
@@ -1444,8 +1450,8 @@ Cross-Origin Resource Sharing (CORS) and the CORS-mode of Fetch.</p>
       <td>Read header values
       <td>DISALLOWED
    </table>
-   <h2 class="heading settled" data-level="4" id="script"><span class="secno">4. </span><span class="content">&lt;script>, resources-as-applications, XHR and AJAX</span><a class="self-link" href="#script"></a></h2>
-    With the introduction of Javascript, active resources came to the web. (plugins are their own topic, of thankfully ever-decreasing relevance)  This raised interesting challenges about the security perimeter for the web-resource-as-application: how to allow rich interactivity that is useful and powerful without breaking the security of existing services and resources?  Netscape decided to go with a security model similar to that of cookies.  The Same Origin Policy, as it was called, came to be the foundational strategy for client-side web application security.  The security boundaries of a resource are defined by its Origin, the URI scheme/host/port tuple where it was loaded from.  Under the Same Origin Policy, a resource has authority to read from and send to other resources with few restrictions when they are Same-Origin, but it cannot read and send to cross-origin resources, except as previously allowed in our permission tables above.  The XMLHttpRequest and introduction of the async request pattern followed after Javascript and adhered to the same basic rules. 
+   <h2 class="heading settled" data-level="5" id="script"><span class="secno">5. </span><span class="content">&lt;script>, resources-as-applications, XHR and AJAX</span><a class="self-link" href="#script"></a></h2>
+    With the introduction of JavaScript, resources on the Web became applications. (plugins are their own topic, of thankfully ever-decreasing relevance)  This raised interesting challenges about the security perimeter for the web-resource-as-application: how to allow rich interactivity that is useful and powerful without breaking the security of existing services and resources?  Netscape decided to go with a security model similar to that of cookies.  The Same Origin Policy, as it was called, came to be the foundational strategy for client-side web application security.  The security boundaries of a resource are defined by its Origin, the URI scheme/host/port tuple where it was loaded from.  Under the Same Origin Policy, a resource has authority to read from and send to other resources with few restrictions when they are same-origin, but it cannot read and send to cross-origin resources, except as previously allowed in our permission tables above.  The XMLHttpRequest and introduction of the async request pattern followed after JavaScript and adhered to the same basic rules. 
    <div class="note" role="note">
      <strong>Leaks at the edges of the Same Origin Policy model</strong> 
     <p>
@@ -1456,7 +1462,7 @@ Cross-Origin Resource Sharing (CORS) and the CORS-mode of Fetch.</p>
     <p>
      More importantly, because the 
      <tt>&lt;script></tt>
-      tag was not limited to only loading Same-Origin resources, cross-origin documents can implicitly read the response content of the script through its (often deliberate) side-effects.  This led to some interesting security vulnerabilities and also some interesting ways to do cross-origin mashup applications.
+      tag was not limited to only loading same-origin resources, cross-origin documents can implicitly read the response content of the script through its (often deliberate) side-effects.  This led to some interesting security vulnerabilities and also some interesting ways to do cross-origin mashup applications.
     </p>
     <p>
      On the vulnerability side, 
@@ -1465,7 +1471,7 @@ Cross-Origin Resource Sharing (CORS) and the CORS-mode of Fetch.</p>
      <tt>document.write()</tt>
       of that information, any other site on the internet could include that resource with a 
      <tt>&lt;script></tt>
-      tag on their own site and read your account balance.  This is why you often see Javascript resources that begin with a guard statement like 
+      tag on their own site and read your account balance.  This is why you often see JavaScript resources that begin with a guard statement like 
      <tt>for(;;) {}</tt>
      .  This infinite loop blocks the thread and prevents access to the information that follows, except by a Same-Origin caller that can access the response contents explicitly with an async request and read past the guard.
     </p>
@@ -1481,8 +1487,8 @@ Cross-Origin Resource Sharing (CORS) and the CORS-mode of Fetch.</p>
     </p>
     <p>While extremely useful, JSONP and cross-origin script inclusion generally are dangerous patterns.  JSONP is really just “friendly” Cross-Site Scripting.  A resource using JSONP must completely trust the remote resource not to be malicious or compromised; the payload could just as easily be an information-stealing script as an information-passing one and it will be executed in the security domain of the caller, whatever it contains.  A resource providing JSONP responses must also be careful not to send them to the wrong origins. Enabling cross-origin async data exchange in a more secure manner than JSONP was a motivating use case in the design of CORS.</p>
    </div>
-   <p>The browser permissions table, post-Javascript but pre-CORS, looks as follows.  The CORS specification refers to requests and responses that fall within this permission set as “simple” requests and responses, and the Fetch specification calls these methods and headers “safelisted”.</p>
-   <h3 class="heading settled" data-level="4.1" id="cross-origin-send-permissions-simple-safelisted-request"><span class="secno">4.1. </span><span class="content">CROSS-ORIGIN SEND PERMISSIONS (Simple / Safelisted Request)</span><a class="self-link" href="#cross-origin-send-permissions-simple-safelisted-request"></a></h3>
+   <p>The browser permissions table, post-JavaScript but pre-CORS, looks as follows.  The CORS specification refers to requests and responses that fall within this permission set as “simple” requests and responses, and the Fetch specification calls these methods and headers “safelisted”.</p>
+   <h3 class="heading settled" data-level="5.1" id="cross-origin-send-permissions-simple-safelisted-request"><span class="secno">5.1. </span><span class="content">CROSS-ORIGIN SEND PERMISSIONS (Simple / Safelisted Request)</span><a class="self-link" href="#cross-origin-send-permissions-simple-safelisted-request"></a></h3>
    <table class="accessControlTable">
     <tbody>
      <tr class="allowed">
@@ -1538,7 +1544,7 @@ not a failure:</p>
       <td>Set header value: Width
       <td>ALLOWED
    </table>
-   <h3 class="heading settled" data-level="4.2" id="cross-origin-read-permissions-simple-safelisted-response"><span class="secno">4.2. </span><span class="content">CROSS-ORIGIN READ PERMISSIONS (Simple / Safelisted Response)</span><a class="self-link" href="#cross-origin-read-permissions-simple-safelisted-response"></a></h3>
+   <h3 class="heading settled" data-level="5.2" id="cross-origin-read-permissions-simple-safelisted-response"><span class="secno">5.2. </span><span class="content">CROSS-ORIGIN READ PERMISSIONS (Simple / Safelisted Response)</span><a class="self-link" href="#cross-origin-read-permissions-simple-safelisted-response"></a></h3>
    <table class="accessControlTable">
     <tbody>
      <tr class="disallowed">
@@ -1554,12 +1560,12 @@ not a failure:</p>
       <td>Read header values
       <td>DISALLOWED
    </table>
-   <h2 class="heading settled" data-level="5" id="cors"><span class="secno">5. </span><span class="content">CORS</span><a class="self-link" href="#cors"></a></h2>
-    As Javascript and AJAX became ubiquitous on the web and the browser became a rich client-side application platform, people wanted to be able to do more complex things with cross-origin requests (as compared to the old “simple” requests and responses). 
-   <p>Enter Cross-Origin Resource Sharing.  The challenge when designing CORS was how to enable web applications to request and receive more permissions to read and write cross-origin, without exposing existing applications to new attacks.  By the time CORS arrived on the scene, there were already billions of HTTP resources, used by a wide array of applications beyond the traditional browser.  Many of those resources relied implicitly on the permission table we have seen so far for security.  For example, they might expose a privileged endpoint on an intranet, but check for a special HTTP request header that only a non-browser or same-origin client could set, to protect themselves from CSRF-type attacks. Enabling CORS couldn’t suddenly make all those existing applications vulnerable; it needed to evolve the web platform in a way that preserved backwards-compatibility for cross-origin security.</p>
-   <h3 class="heading settled" data-level="5.1" id="identify-yourself-and-get-permission-simple-request-read-permissions"><span class="secno">5.1. </span><span class="content">Identify Yourself and Get Permission: Simple Request Read Permissions</span><a class="self-link" href="#identify-yourself-and-get-permission-simple-request-read-permissions"></a></h3>
+   <h2 class="heading settled" data-level="6" id="cors"><span class="secno">6. </span><span class="content">CORS</span><a class="self-link" href="#cors"></a></h2>
+    As JavaScript and AJAX became ubiquitous on the web and the browser became a rich client-side application platform, people wanted to be able to do more complex things with cross-origin requests (as compared to the old “simple” requests and responses). 
+   <p>Enter Cross-Origin Resource Sharing.  The challenge when designing CORS was how to enable web applications to request and receive more cross-origin permissions, without exposing existing applications to new attacks.  By the time CORS arrived on the scene there were already billions of HTTP resources in use by a wide array of applications beyond the traditional browser.  Many of those resources relied implicitly on the original permission table.  For example, they might expose a privileged endpoint on an intranet, but check for a special HTTP request header that only a non-browser or same-origin client could set, to protect themselves from CSRF-type attacks. The design of CORS couldn’t suddenly make all those existing applications vulnerable; it needed to evolve the web platform in a backwards-compatible way.</p>
+   <h3 class="heading settled" data-level="6.1" id="identify-yourself-and-get-permission-simple-request-read-permissions"><span class="secno">6.1. </span><span class="content">Identify Yourself and Get Permission: Simple Request Read Permissions</span><a class="self-link" href="#identify-yourself-and-get-permission-simple-request-read-permissions"></a></h3>
     The way to expand the permissions available to invoke and read cross-origin resources safely is to identify yourself to the foreign resource and have it grant you additional privileges.  This extending of the access control table is at the heart of Cross-Origin Resource Sharing. 
-   <p>First: how to identify yourself?  The Javascript Same Origin Policy made the Origin the main security boundary / principal for the web, so this is how you identify yourself to request new permissions.  Whenever you make a request in CORS mode, the browser will add an HTTP header, “Origin”, identifying the context from which the request originated.</p>
+   <p>First: how to identify yourself?  The JavaScript Same Origin Policy made the Origin the main security boundary / principal for the web, so this is how you identify yourself to request new permissions.  Whenever you make a request in CORS mode, the browser will add an HTTP header, “Origin”, identifying the context from which the request originated.</p>
    <p>Next: how to get extra permissions? If you are making a cross-origin request already allowed by the pre-CORS permission table (AKA a “simple” request) all you need to is let the browser send an Origin header with the request.  When it receives such a request, the foreign resource can examine the Origin header of the request and decide to grant it additional Read permissions.</p>
    <p>If a simple CORS request (withCredentials=true) and an Origin header were initiated with XMLHttpRequest or the Fetch API by a resource with an Origin of <strong>https://example.com</strong>, and the response from the resource included the following:</p>
 <pre>Access-Control-Allow-Origin: https://example.com
@@ -1639,7 +1645,7 @@ Access-Control-Expose-Headers: Special-Response-Header, Header2
       <tt>Set-Cookie2</tt>
     </ul>
    </div>
-   <h3 class="heading settled" data-level="5.2" id="getting-additional-send-permissions"><span class="secno">5.2. </span><span class="content">Getting Additional Send Permissions</span><a class="self-link" href="#getting-additional-send-permissions"></a></h3>
+   <h3 class="heading settled" data-level="6.2" id="getting-additional-send-permissions"><span class="secno">6.2. </span><span class="content">Getting Additional Send Permissions</span><a class="self-link" href="#getting-additional-send-permissions"></a></h3>
    <p>What if you want to make a request that isn’t allowed by the simple request permissions table?  To protect legacy resources that may not understand CORS, you must first ask permission to expand your send privileges.  This permission granting is done with a “preflight request”.   If you are writing the client side of an application, the browser will take care of most of this for you.  You simply enable CORS and make your request.  If, e.g., you wanted to send a cross-origin PUT request and set the header “Special-Request-Header: foobar”, the browser would automatically send a preflight request.  That preflight would include the following:</p>
 <pre>Origin: https://example.com
 Access-Control-Request-Method: PUT
@@ -1732,15 +1738,15 @@ Access-Control-Max-Age: 60
       which will be indistinguishable to these applications from their hyphenated equivalents which are banned by browsers.
     </p>
    </div>
-   <h3 class="heading settled" data-level="5.3" id="anonymous-requests-or-access-control-allow-origin"><span class="secno">5.3. </span><span class="content">Anonymous Requests (or, “Access-Control-Allow-Origin: *”)</span><a class="self-link" href="#anonymous-requests-or-access-control-allow-origin"></a></h3>
+   <h3 class="heading settled" data-level="6.3" id="anonymous-requests-or-access-control-allow-origin"><span class="secno">6.3. </span><span class="content">Anonymous Requests (or, “Access-Control-Allow-Origin: *”)</span><a class="self-link" href="#anonymous-requests-or-access-control-allow-origin"></a></h3>
    <p>In addition to credentialed requests, CORS sought to solve one additional use case.  Some resources on the web are truly public, and can be read by anyone.  Before CORS, an application could access such resources by requesting that its origin server proxy them.  This was safe because the proxy server had no ambient authority - that is, it couldn’t make those requests with users’ cookies, it could only return public content available to anyone.</p>
-   <p>While this worked, it was wasteful of resources, high-latency, and prevented building some classes of server-less applications in the browser.  CORS allows such resources to be requested and accessed directly with anonymous requests. (In fact, it is the default mode of CORS.)</p>
+   <p>While this worked, it was wasteful of resources, high-latency, and prevented building some classes of server-less applications in the browser.  CORS allows such resources to be requested and accessed directly with anonymous requests. (In fact, anonymous requests are the default mode of CORS.)</p>
    <p>
     Unlike the previous values for 
     <tt>Access-Control-Allow-Origin</tt>
      headers we’ve seen, which add values to the discretionary access control table, anonymous requests follow a mandatory access control model.  If a request is marked as accessible to anonymous requests, it is only accessible to anonymous requests.
    </p>
-   <p>How does this work?  A resource simply includes the following header in its response:</p>
+   <p>How does this work?  A resource includes the following header in its response:</p>
 <pre>Access-Control-Allow-Origin: *
 </pre>
    <p>
@@ -1768,24 +1774,22 @@ Access-Control-Max-Age: 60
    <div class="note" role="note">
      <strong>Why does <tt>*</tt> mean “anonymous requests only” and not “everyone”?</strong> 
     <p>
-     The use of the asterisk by CORS can be confusing in the context of an otherwise discretionary access control model.  It is intended only to replace the proxy use case for static resources or those that respond uniformly to requests from all origins.  It may help to think of 
+     The use of the asterisk by CORS can be confusing in the context of an otherwise discretionary access control model.  It is intended only to replace the proxy use case for static resources or those that respond uniformly to requests from all origins.  A 
      <tt>*</tt>
-      as a mandatory, not a discretionary control.  A 
-     <tt>*</tt>
-      says a resource is accessible to anybody, but if your cookies and Origin header told me who you are, you’re not “anybody” anymore - now you are somebody.
+      says a resource is accessible to "anybody", but if your cookies identify you, you’re not “anybody” anymore - now you are somebody.
     </p>
-    <p>An unfortunate consequence of this model, however, is that a CORS client must know in advance if the contract of a resource it is requesting requires anonymous or credentialed access, or it must implement client-side failure and retry logic.  This can be problematic when designing something like an open data explorer if all potential data sources do not uniformly respond to anonymous requests.</p>
+    <p>An unfortunate consequence of this model is that a CORS client must know in advance if the contract of a resource it is requesting requires anonymous or credentialed access, or it must implement client-side failure and retry logic.  This can be problematic when designing something like an open data explorer when all potential data sources do not uniformly respond to anonymous requests.</p>
     <p>
      <strong>The story behind <tt>*</tt></strong> Why does the 
      <tt>*</tt>
-      mode of CORS behave so differently than the credentialed mode? Given the already long history of web vulnerabilities attributable to abuse of ambient authority, there were two schools of thought about how to expand the web platform with cross-origin requests at the time CORS was developed.  One camp proposed extending the already-familiar ambient authority model in which the user agent transparently adds cookies to requests and performs permission management for resources.  The other camp felt that ambient authority was a mistake in the architecture of the web, and advocated for cross-origin requests free of any ambient credentials or origin-based authentication.  (Which, they also argued, could be exempt from the Same Origin Policy entirely, since such requests were equivalent to loading from an unprivileged proxy.)  The 
+      mode of CORS behave so differently than the credentialed mode? Given the already long history of web vulnerabilities attributable to abuse of ambient authority, there were two schools of thought about how to expand the web platform with cross-origin requests.  One camp proposed extending the already-familiar cookie model to authenticate to cross-origin resources.  The other camp felt that ambient authority was a mistake in the architecture of the web, and advocated for cross-origin requests free of any ambient credentials or origin-based authentication.  (Such requests, they also argued, could be exempt from the Same Origin Policy entirely, as they would be equivalent to loading from an unprivileged proxy.)  The 
      <tt>XDomainRequest</tt>
       object in Microsoft Internet Explorer 8 and 9 retained some of this style - it had no support for credentials, only anonymous requests, although it also used the same 
      <tt>Access-Control-[...]</tt>
       headers.
     </p>
     <p>
-     The familiarity of the ambient authority model of CORS and its ability to slot easily into existing application authentication and authorization frameworks eventually won more favor with developers than re-designing their applications in a capability-security style, (https://www.w3.org/TR/capability-urls/) but the anonymous request mode was retained as a “subset” of CORS.  Unfortunately, the subtle differences in architectural style that persisted and the choice of 
+     The familiarity and compatibility of the cookie-based credentials model of CORS eventually won more favor with developers than re-designing their applications in a capability-security style. (https://www.w3.org/TR/capability-urls/) As a compromise, the anonymous request mode was retained as a “subset” of CORS.  Unfortunately, the subtle differences in architectural style that persisted and the choice of 
      <tt>*</tt>
       to represent such requests has been a consistent source of confusion.
     </p>
@@ -1797,16 +1801,16 @@ Access-Control-Max-Age: 60
     <p>
      Responses with 
      <tt>*</tt>
-      are not truly uniform, either.  Because the user agent always sends the Origin header for a CORS requests, even those made without credentials, a server might choose to very its response based on that information.
+      are not truly uniform, either.  Because the user agent always sends the Origin header for a CORS requests, even those made without credentials, a server might choose to vary its response based on that information.
     </p>
    </div>
-   <h2 class="heading settled" data-level="6" id="resources"><span class="secno">6. </span><span class="content">Advice for Resource Owners</span><a class="self-link" href="#resources"></a></h2>
-    Providing resources for cross-origin consumption requires some work, as well. 
-   <h3 class="heading settled" data-level="6.1" id="always-send--for-resources-that-respond-uniformly"><span class="secno">6.1. </span><span class="content">Always send * for resources that respond uniformly</span><a class="self-link" href="#always-send--for-resources-that-respond-uniformly"></a></h3>
+   <h2 class="heading settled" data-level="7" id="resources"><span class="secno">7. </span><span class="content">Advice for Resource Owners</span><a class="self-link" href="#resources"></a></h2>
+    Understanding the client side operation of CORS helps inform how to send headers as a resource owner, but some additional advice applies. 
+   <h3 class="heading settled" data-level="7.1" id="always-send--for-resources-that-respond-uniformly"><span class="secno">7.1. </span><span class="content">Always send * for resources that respond uniformly</span><a class="self-link" href="#always-send--for-resources-that-respond-uniformly"></a></h3>
     It is always safe to return 
    <tt>Access-Control-Allow-Origin: *</tt>
     for static resources that do not respond differently based on cookies or other distinguishing characteristics of the request.  Such resources could always be fetched into the context of any foreign resource via a proxy, so allowing read access is an optimization that has no additional security or privacy implications.  Sending * is part of being a good citizen of the Web as it allows browser-based applications like podcast aggregators or Open Data browsers to access your resources as a native app equivalent might, without needing a proxy server. 
-   <h3 class="heading settled" data-level="6.2" id="use-vary"><span class="secno">6.2. </span><span class="content">Use Vary</span><a class="self-link" href="#use-vary"></a></h3>
+   <h3 class="heading settled" data-level="7.2" id="use-vary"><span class="secno">7.2. </span><span class="content">Use Vary</span><a class="self-link" href="#use-vary"></a></h3>
     If a resource requires credentials, it cannot return 
    <tt>*</tt>
    , it must reflect the Origin header value from the request.  This implies that, unless the response explicitly indicates it should never be cached, it should also send a 
@@ -1821,8 +1825,23 @@ Access-Control-Max-Age: 60
     <tt>Access-Control-Allow-Origin</tt>
      header for credentialed requests.
    </p>
-   <h3 class="heading settled" data-level="6.3" id="do-not-blindly-reflect-request-origin-for-credentialed-requests-when-a-resource-may-contain-secrets-or-pii"><span class="secno">6.3. </span><span class="content">Do not blindly reflect request Origin for credentialed requests when a resource may contain secrets or PII</span><a class="self-link" href="#do-not-blindly-reflect-request-origin-for-credentialed-requests-when-a-resource-may-contain-secrets-or-pii"></a></h3>
+   <h3 class="heading settled" data-level="7.3" id="do-not-blindly-reflect-request-origin-for-credentialed-requests-when-a-resource-may-contain-secrets-or-pii"><span class="secno">7.3. </span><span class="content">Do not blindly reflect request Origin for credentialed requests when a resource may contain secrets or PII</span><a class="self-link" href="#do-not-blindly-reflect-request-origin-for-credentialed-requests-when-a-resource-may-contain-secrets-or-pii"></a></h3>
     If your resource includes customized, per-user content, it should not expose such information cross-origin.  Consider carefully if "public" content may inadvertantly include things like session tokens, anti-CSRF tokens, grettings that expose personally identifying information like user names, or comments that contain uniquely identifying identifiers.  Such things exposed blindly cross-origin may compromise the security and privacy of your users by providing a stable identifier that can track them across all their activities on the web or allow hijacking of their account. (even though cookie headers are never shared with CORS) 
+   <h3 class="heading settled" data-level="7.4" id="avoid-returning-access-control-allow-origin-null"><span class="secno">7.4. </span><span class="content">Avoid returning <tt>Access-Control-Allow-Origin: "null"</tt></span><a class="self-link" href="#avoid-returning-access-control-allow-origin-null"></a></h3>
+    It may seem safe to return 
+   <tt>Access-Control-Allow-Origin: "null"</tt>
+   , but the serialization of the Origin of any resource that uses a non-hierarchical scheme (such as 
+   <tt>data:</tt>
+    or 
+   <tt>file:</tt>
+   ) and sandboxed documents is defined to be "null".  Many User Agents will grant such documents access to a response with an 
+   <tt>Access-Control-Allow-Origin: "null"</tt>
+    header, and any origin can create a hostile document with a "null" Origin.  The "null" value for the ACAO header should therefore be avoided. 
+   <div class="note" role="note">
+     The simple string comparison of CORS as applied to "null" is controversial.  Some believe that "null" should be treated as a keyword token indicating the lack of an Origin, which, when tested, should never compare as equal to another "null" Origin. (As is the case with 
+    <tt>null</tt>
+     values in SQL, for example.)  It is unwise to build systems which rely on the "null" equals "null" comparison as this behavior may change in the future. 
+   </div>
   </main>
 <script>
 (function() {
